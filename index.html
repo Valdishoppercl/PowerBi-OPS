@@ -23,13 +23,84 @@
             background-color: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
     </style>
+    <!-- Incluir el widget de Netlify Identity -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Operaciones Valdishopper</h1>
-        <!-- Código de incrustación de Power BI -->
-        <iframe title="tablerovs" width="1024" height="1060" src="https://app.powerbi.com/view?r=eyJrIjoiYjVkYmE2MGEtZDQyZS00NjMwLWE4OWItZmI3Y2MxOWE5NDdiIiwidCI6IjQzOTNkNWQ3LTIzZmQtNDJkNC1hYWM3LTRmMWQ1ZjVhMDRlYiIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+
+        <!-- Contenedor de login -->
+        <div class="login-container" id="login-container">
+            <p id="login-message">Cargando...</p>
+            <button id="login-button" onclick="netlifyIdentity.open()">Iniciar sesión / Registrarse</button>
+        </div>
+
+        <!-- Contenedor del iframe de Power BI, inicialmente oculto -->
+        <div id="report-container" style="display: none;">
+            <!-- Código de incrustación de Power BI -->
+            <iframe title="tablerovs" width="1024" height="1060" src="https://app.powerbi.com/view?r=eyJrIjoiYjVkYmE2MGEtZDQyZS00NjMwLWE4OWItZmI3Y2MxOWE5NDdiIiwidCI6IjQzOTNkNWQ3LTIzZmQtNDJkNC1hYWM3LTRmMWQ1ZjVhMDRlYiIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+            <button onclick="netlifyIdentity.logout()">Cerrar sesión</button>
+        </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Verificar si el usuario está autenticado
+            netlifyIdentity.on('init', user => {
+                if (user) {
+                    mostrarReporte(); // Mostrar reporte si ya está autenticado
+                } else {
+                    mostrarLogin(); // Mostrar login si no está autenticado
+                }
+            });
+
+            // Mostrar el formulario de login
+            netlifyIdentity.on('login', () => {
+                mostrarReporte(); // Mostrar el reporte después de iniciar sesión
+                window.location.reload();
+            });
+
+            // Cerrar sesión
+            netlifyIdentity.on('logout', () => {
+                mostrarLogin(); // Mostrar login después de cerrar sesión
+                window.location.reload();
+            });
+
+            // Inicializar Netlify Identity
+            netlifyIdentity.init();
+
+            // Función para mostrar el login
+            function mostrarLogin() {
+                document.getElementById('login-container').style.display = 'flex';
+                document.getElementById('report-container').style.display = 'none';
+                document.getElementById('login-message').innerText = 'Por favor, inicia sesión para ver el reporte';
+            }
+
+            // Función para mostrar el reporte de Power BI
+            function mostrarReporte() {
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('report-container').style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>
