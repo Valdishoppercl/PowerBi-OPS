@@ -64,6 +64,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Inicializar Netlify Identity
+            netlifyIdentity.init();
+
             // Verificar si el usuario está autenticado
             netlifyIdentity.on('init', user => {
                 if (user) {
@@ -85,8 +88,16 @@
                 window.location.reload();
             });
 
-            // Inicializar Netlify Identity
-            netlifyIdentity.init();
+            // Validar el correo electrónico en el registro
+            netlifyIdentity.on('register', user => {
+                const email = user.email;
+
+                // Verifica que el correo tenga el dominio valdishopper.com
+                if (!email.endsWith('@valdishopper.com')) {
+                    alert('Por favor, utiliza un correo válido de @valdishopper.com');
+                    netlifyIdentity.logout(); // Cierra sesión si el correo no es válido
+                }
+            });
 
             // Función para mostrar el login
             function mostrarLogin() {
