@@ -64,9 +64,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Inicializar Netlify Identity
-            netlifyIdentity.init();
-
             // Verificar si el usuario está autenticado
             netlifyIdentity.on('init', user => {
                 if (user) {
@@ -79,9 +76,7 @@
             // Mostrar el formulario de login
             netlifyIdentity.on('login', () => {
                 mostrarReporte(); // Mostrar el reporte después de iniciar sesión
-                setTimeout(() => {
-                    window.location.reload(); // Recargar para reflejar el estado de sesión
-                }, 1000); // Retardo opcional
+                window.location.reload();
             });
 
             // Cerrar sesión
@@ -89,6 +84,9 @@
                 mostrarLogin(); // Mostrar login después de cerrar sesión
                 window.location.reload();
             });
+
+            // Inicializar Netlify Identity
+            netlifyIdentity.init();
 
             // Función para mostrar el login
             function mostrarLogin() {
